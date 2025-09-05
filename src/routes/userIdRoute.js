@@ -16,16 +16,16 @@ const teacherOrAdminAuth  = require("../middlewares/auth").teacherOrAdminAuth;//
 //const { validarPermisos } = require("../middlewares/validarPermisos");
 const router = require('express').Router();
 
-router.route("/student").get(getStudentsController);
-router.route("/teacher").get(validarSesion,adminAuth,getTeachersController);
-router.route("/admin").get(validarSesion,adminAuth,getAdminsController);
+router.route("/student").get( getStudentsController, validarSesion, teacherOrAdminAuth); //obitene lista de estudiantes
+router.route("/teacher").get(getTeachersController, validarSesion, teacherOrAdminAuth);//obitene lista de profesores
+router.route("/admin").get(  getAdminsController, validarSesion, adminAuth);//obitene lista de admins
 
 // acciones para el usuario, solo el admin puede hacer estas acciones
-router.route("/delete/:id").delete(validarSesion , adminAuth , deleteUserController);
-router.route("/add").post(validarSesion, adminAuth ,addUserController);
-router.route("/update/:id").put(validarSesion, adminAuth ,updateUserController);
+router.route("/delete/:id").delete(deleteUserController,validarSesion, adminAuth);
+router.route("/add").post(addUserController,validarSesion, adminAuth);
+router.route("/update").put(updateUserController,validarSesion, adminAuth);
 
 // test view user by id
-router.route("/:id").get(getUserById);
+router.route("/:id").get( getUserById, validarSesion);
 
 module.exports = router;

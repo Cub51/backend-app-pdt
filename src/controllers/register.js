@@ -5,7 +5,7 @@ const Profile = require("../models/perfilEstudiante");
 // Registrar un usuario
 const register = async (req, res) => {
   try {
-    const { nombre, apellido, correo, contrasena } = req.body;
+    const { nombre, apellido, correo, contrasena, rol } = req.body;
     Usuario.findOne({ correo }).then((usuario) => {
       if (usuario) {
         return res.status(401).json({ message: "Ya existe un usuario con ese correo" });
@@ -29,6 +29,7 @@ const register = async (req, res) => {
               apellido,
               correo,
               contrasena: contrasenaHasheada,
+              rol,
             });
             nuevoUsuario.save().then((usuarioData) => {
               // crear perfil
@@ -62,4 +63,3 @@ const register = async (req, res) => {
 };
 
 module.exports = register;
-            

@@ -13,7 +13,7 @@ const getUserById = async (req, res) => {
       }
     });
   } else {
-    return res.json({ message: "Id inválido" });
+    return res.json({ message: "El usuario que buscas no es valido" }); //Id inválido
   }
 };
 

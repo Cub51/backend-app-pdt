@@ -20,14 +20,14 @@ router.route('/get-one-pr/:practicaEstadoId').get( getOnePracticaEstado__control
 router.route('/get-pr-by-curso/:cursoId').get( getPracticasEstadoByCurso__controller);
 
 
-router.route('/get-pr-by-user/:estudianteId').get( validarSesion , getPracticasEstadoByUserId__controller);
+router.route('/get-pr-by-user/:estudianteId').get(  getPracticasEstadoByUserId__controller);
 
 
 //ESTUDIANTE
-router.route('/update-pr/').put( updatePracticaEstado__controller);
+router.route('/update-pr/').put( updatePracticaEstado__controller, validarSesion);
 
 //PROFESOR
-router.route('/add-comentario-pr/').put( addComentarioPracticaEstado__controller);
-router.route('/calificar-pr/').put( calificarPracticaEstado__controller);
+router.route('/add-comentario-pr/').put( addComentarioPracticaEstado__controller, validarSesion,teacherAuth);
+router.route('/add-calificar-pr/').put( calificarPracticaEstado__controller, validarSesion, teacherAuth);
 
 module.exports = router;

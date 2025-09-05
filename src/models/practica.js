@@ -1,33 +1,38 @@
+const { model, Schema } = require("mongoose");
 
-const {model, Schema} = require('mongoose');
-
-const practicaSchema = new Schema({
+const practicaSchema = new Schema(
+  {
     titulo: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
-    objetivo: [{
+    objetivo: [
+      {
         type: String,
-        required: true
-    }],
-    actividad: [{
+        required: true,
+      },
+    ],
+    actividad: [
+      {
         type: String,
-        required: true
-    }],
-    estado: {//estado inicial de la practica creada por el profesor
-        type: Object,//JSON
-        required: true
+        required: true,
+      },
+    ],
+    estado: {
+      //estado inicial de la practica creada por el profesor
+      type: Object, //JSON
+      required: true,
     },
     // cursoId es el id del curso al que pertenece la practica
     curso: {
-        type: Schema.Types.ObjectId,
-        ref: 'Curso'
+      type: Schema.Types.ObjectId,
+      ref: "Curso",
     },
     createdAt: {
-        type: Schema.Types.ObjectId,
-        ref: 'Usuario'
+      type: Schema.Types.ObjectId,
+      ref: "Usuario",
     },
-  /*  fechaInicio: {
+    /*  fechaInicio: {
         type: Date,
         required: true
     },
@@ -39,8 +44,10 @@ const practicaSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Entrega'
     }]*/
-}, {
-    timestamps: true
-});
+  },
+  {
+    timestamps: true,
+  }
+);
 
-module.exports = model('Practica', practicaSchema);
+module.exports = model("Practica", practicaSchema);

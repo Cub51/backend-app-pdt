@@ -4,14 +4,11 @@ const Usuario = require('../models/usuario');
 const profile = (req, res) => {
     res.json({ message: "Perfil" });
     }
-
-
 //crear perfil
 const createProfile = async (req, res) => {
     try {
         const { userId, cursosAsignados, asistencia } = req.body;
-        let profileCheck = await Perfil.findOne
-        ({ userId });
+        let profileCheck = await Perfil.findOne({ userId });
         if (profileCheck) {
         return res.status(400).json({
             error: "Profile Already Exists",
@@ -53,15 +50,14 @@ console.log(userId);
 
 const getProfile = async (req, res) => {
     try {
-        const perfil = await Perfil.findOne({ userId: req.params.userId });
-        {console.log(perfil);}
-console.log('aaa ',req.params.userId);
+        const perfil = await Perfil.findOne({ userId: req.params.userId }).populate(
+            "userId",
+            "rol fechaRegistro fechaActualizacion"
+            ).lean();
         return res.status(200).json({
         perfil,
-
         });
     } catch (err) {
-        console.log(err);
         return res.status(400).json({
         error: "Something went wrong",
         });

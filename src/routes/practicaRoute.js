@@ -28,7 +28,4 @@ router.route('/get-one-pr/:practicaId').get( getOnePractica__controller);
 
 // Ruta para eliminar una practica por id
 router.route('/delete-pr/:practicaId').delete( deletePractica__controller);
-
-
-
 module.exports = router;

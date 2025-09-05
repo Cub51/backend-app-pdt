@@ -103,10 +103,9 @@ const getPracticasEstadoByUserId__controller = async (req, res) => {
 const getPracticasEstadoByCurso__controller = async (req, res) => {
     try {
         const practicaPrincipal = await Practica.find({ curso: req.params.cursoId }).lean();
-
-       const practicasCurso = await PracticaEstado.find({ practicaAsignada: { $in: practicaPrincipal.map((practica) => practica._id) } }).populate(
+        const practicasCurso = await PracticaEstado.find({ practicaAsignada: { $in: practicaPrincipal.map((practica) => practica._id) } }).populate(
         "practicaAsignada",
-        "titulo" 
+        "titulo objetivo actividad" 
         ).lean();
         //
         return res.status(200).json({
@@ -127,14 +126,16 @@ const getPracticasEstadoByCurso__controller = async (req, res) => {
 //Estudiante modifica practica
 const updatePracticaEstado__controller = async (req, res) => {
     try {
-        const { practicaEstadoId, estado } = req.body;
-        if (!practicaEstadoId || !estado) {
+        const { _id, estado } = req.body.body;
+        console.log(" esaado :", req.body.body);
+        if (!_id || !estado) {
         return res.status(400).json({
             error: "Please Provide All Information",
         });
         }
-        const practicaEstado = await PracticaEstado.findById(practicaEstadoId);
-        practicaEstado.estado = estado;
+        const practicaEstado = await PracticaEstado.findById(_id); 
+        practicaEstado.estado = estado; 
+        practicaEstado.updatedAt = Date.now();
         practicaEstado
         .save()
         .then((result) => {
@@ -157,7 +158,7 @@ const updatePracticaEstado__controller = async (req, res) => {
     }
 
 
-
+// PROFESOR | ADMINISTRADOR
 //Agregar comentario a la practica de un estudiante
 const addComentarioPracticaEstado__controller = async (req, res) => {
     try {
@@ -168,7 +169,8 @@ const addComentarioPracticaEstado__controller = async (req, res) => {
         });
         }
         const practicaEstado = await PracticaEstado.findById(practicaEstadoId);
-        practicaEstado.comentario = comentario;
+        practicaEstado.comentario = comentario;        
+        //practicaEstado.updatedAt = Date.now();
         practicaEstado
         .save()
         .then((result) => {
@@ -191,11 +193,12 @@ const addComentarioPracticaEstado__controller = async (req, res) => {
     }
 
 
-
+// PROFESOR | ADMINISTRADOR
 // Calificar practica de un estudiante
 const calificarPracticaEstado__controller = async (req, res) => {
     try {
         const { practicaEstadoId, calificacion } = req.body;
+        console.log("calificacion :", req.body);  // este log muestra la calificacion que envia el cliente, pero en realidad no se utiliza, se deja para probar la funcionalidad del backend.
         if (!practicaEstadoId || !calificacion) {
         return res.status(400).json({
             error: "Please Provide All Information",

@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Usuario = require("../models/usuario");
 
-
 let failedAttempts = 0;
 
 const login = async (req, res) => {
@@ -30,14 +29,12 @@ const login = async (req, res) => {
         failedAttempts++;
         return res.json({ message: "Contraseña incorrecta" });
       } else {
-        // Aquí es donde enviarías la respuesta final
-        // Eliminamos la contraseña del usuario para no enviarla en la respuesta
+        // Eliminar la contraseña del usuario para no enviarla en la respuesta
         usuario.contrasena = undefined;
         // Creamos un token con la información del usuario
         const token = jwt.sign({ usuario }, process.env.SECRET_KEY, {
           expiresIn: "1h",
         });
-
         //crear perfil si no existe y enviarlo en la respuesta
         res
           .status(200)

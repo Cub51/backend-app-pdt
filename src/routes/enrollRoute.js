@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const router = Router();
-const  {matricularCurso, getEnrolledCourses}  = require('../controllers/matricularCurso');
+const  {matricularCurso, getEnrolledCourses, }  = require('../controllers/matricularCurso');
 
 const validarSesion  = require('../middlewares/validarSesion');
 
@@ -9,10 +9,10 @@ const validarSesion  = require('../middlewares/validarSesion');
 //router.route('/:personId/:cursoId').put( validarSesion ,matricularCurso);
 
 //smatricula
-router.route('/mat/').put( validarSesion ,matricularCurso);
+router.route('/mat/').put( matricularCurso);
 
 //listar cursos matriculados por un usuario
-router.route('/listarMat/:id').get(validarSesion , getEnrolledCourses);
+router.route('/listarMat').get(getEnrolledCourses,validarSesion);
 
 
 module.exports=router

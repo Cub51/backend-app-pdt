@@ -1,8 +1,10 @@
 const {
   postCourse__controller,
   getCourses__controller,
+  getCoursesTeacher_Controller,
   getOneCourse__controller,
   deleteCourse__Controller,
+  updateCourse__Controller,
 } = require("../controllers/course");
 
 const validarSesion = require("../middlewares/validarSesion");
@@ -12,24 +14,30 @@ const studentAuth = require("../middlewares/auth").studentAuth;
 const teacherOrAdminAuth = require("../middlewares/auth").teacherOrAdminAuth;
 
 const router = require("express").Router();
-//revisar el middleware de teacherOrAdminAuth
-// revisar id denro de body y no en la URL
 
 router
   .route("/post-course")
-  .post(validarSesion, postCourse__controller);
+  .post( postCourse__controller, validarSesion,teacherOrAdminAuth);
 
 router
 .route("/get-courses")
-.get(validarSesion, getCourses__controller);
+.get( getCourses__controller,validarSesion);
 
 router
   .route("/get-course/:courseId")
-  .get(validarSesion, getOneCourse__controller);
+  .get( getOneCourse__controller,validarSesion,);
+
+router
+  .route("/get-courses-teacher/:teacherId")
+  .get( getCoursesTeacher_Controller,validarSesion);
 
 router
   .route("/delete/:delId")
-  .delete(validarSesion, adminAuth, deleteCourse__Controller);
+  .delete( deleteCourse__Controller,validarSesion);
+
+router
+  .route("/update")
+  .put( updateCourse__Controller,validarSesion);
 
 module.exports = router;
 

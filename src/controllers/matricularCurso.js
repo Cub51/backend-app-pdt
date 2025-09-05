@@ -1,40 +1,33 @@
-const MatricularCurso=require('../models/cursoAsignado')
+const MatricularCurso = require("../models/cursoAsignado");
 
+// Matricularse en un curso
 const matricularCurso = async (req, res, next) => {
   try {
-    const {userId, cursoId} = req.body
-    console.log('userId',req.body);
-    // Busca si el usuario ya tiene un curso matriculado
-    const enroll = await MatricularCurso.findOne({ 
-        userId: userId,
-        cursosAsignados: cursoId,
-    });
-   
-    // Valida si ya tiene un curso matriculado, ya no puede volverse a matricular en el mismo curso
-    if (enroll) {
-      console.log(enroll)
-      return res.status(200).json({
-        text: "Course already enrolled", 
-        enroll
+    const { userId, cursoId, rol } = req.body;
+    console.log("userId", req.body);
+    // Validar si el usuario es profesor que no se matricule en el curso
+    if (!(rol === process.env.ROL_ESTUDIANTE)) {
+      return res.status(403).json({
+        text: "No se puede matricular en el curso, solo los estudiantes pueden hacerlo",
       });
-        
-    } else {
-      // Si no tiene un curso matriculado, se matricula en el curso
-      const enroll_course= new MatricularCurso({
-       // userId: req.params.personId,
-       userId: userId,
-        cursosAsignados: cursoId
-      })
-    enroll_course.save()
-    .then(result=>{
+    }
+
+    // Usa `findOneAndUpdate` para agregar el curso si no está ya matriculado
+    const updatedEnroll = await MatricularCurso.findOneAndUpdate(
+      { userId: userId },
+      { $addToSet: { cursosAsignados: cursoId } },
+      { new: true, upsert: true } // `upsert` crea el documento si no existe
+    );
+
+    if (updatedEnroll) {
       return res.status(200).json({
-        text:"Curso Matriculado",
-        result
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-    })
+        text: "Curso Matriculado",
+        result: updatedEnroll,
+      });
+    } else {
+      return res.status(400).json({
+        text: "No se pudo matricular en el curso",
+      });
     }
   } catch (err) {
     console.log(err);
@@ -44,17 +37,19 @@ const matricularCurso = async (req, res, next) => {
 // Listar cursos matriculados por un usuario
 const getEnrolledCourses = async (req, res, next) => {
   try {
-    const userId = req.params.id;
-    console.log('uuuuuu',userId);
-    const enrolledCourses = await MatricularCurso.find({ userId: userId }).populate(
+    const { userId } = req.query;
+    console.log("uuuuuu", userId);
+    const enrolledCourses = await MatricularCurso.find({
+      userId: userId, 
+    }).populate(
       "cursosAsignados",
-      "nombreCurso cursoDescripcion createdAt"
-    );
+      "nombreCurso cursoDescripcion fechaInicio fechaFin responsable createdAt updatedAt"
+    ).lean();
     return res.status(200).json({
       enrolledCourses,
     });
-  } catch (err) {
-    console.log(err); 
+  } catch (err) { 
+    console.log(err);
   }
 };
 
@@ -65,20 +60,19 @@ const getEnrolledUsers = async (curso) => {
     //obtengo el id del curso desde practicaController y lo paso a la ruta de matricularCurso para obtener los usuarios matriculados
     //const courseId = req.params.cursoId;
     const courseId = curso;
-    console.log('courseId',courseId);
+    console.log("courseId", courseId);
 
-    const enrolledUsers = await MatricularCurso.find({ cursosAsignados: courseId }).populate(
-      "userId",
-      "nombre apellido correo"
-    ).lean(); 
-    console.log('enrolledUsers',enrolledUsers);
-    return  enrolledUsers;
-  
+    const enrolledUsers = await MatricularCurso.find({
+      cursosAsignados: courseId,
+    })
+      .populate("userId", "nombre apellido correo")
+      .lean();
+    console.log("enrolledUsers", enrolledUsers);
+    return enrolledUsers;
   } catch (err) {
     console.log(err);
     throw new Error("Something went wrong");
   }
 };
 
-
-module.exports = {matricularCurso, getEnrolledCourses, getEnrolledUsers};
+module.exports = { matricularCurso, getEnrolledCourses, getEnrolledUsers };

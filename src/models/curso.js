@@ -10,8 +10,15 @@ const cursoSchema = new Schema(
       type: String,
       required: true,
     },
-
-    createdAt: {
+    fechaInicio: {
+      type: Date,
+      required: true,
+    },
+    fechaFin: {
+      type: Date,
+      required: true,
+    },
+    responsable: {
       type: Schema.Types.ObjectId,
       ref: "Usuario",
     },

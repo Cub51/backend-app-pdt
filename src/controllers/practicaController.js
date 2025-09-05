@@ -6,6 +6,7 @@ const PracticaEstado = require("../models/practicaEstado");
 const postPractica__controller = async (req, res) => {
   try {
     const { titulo, objetivo, actividad, estado, curso, createdAt } = req.body;
+    console.log("postPractica__controller", req.body);
     if (!titulo || !objetivo || !actividad || !estado || !curso || !createdAt) {
       return res.status(400).json({
         error: "Please Provide All Information",
